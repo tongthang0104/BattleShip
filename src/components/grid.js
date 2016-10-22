@@ -9,7 +9,8 @@ export default class Grid extends Component {
       size: React.PropTypes.number,
       squarePx: React.PropTypes.number,
       ships: React.PropTypes.array.isRequired,
-      onClick: React.PropTypes.func
+      addShip: React.PropTypes.func,
+      shipAdded: React.PropTypes.boolean
     };
   }
 
@@ -24,20 +25,11 @@ export default class Grid extends Component {
   constructor(props) {
     super(props);
 
-    this.handleOnClick = this.handleOnClick.bind(this);
     this.matrix = [];
   }
 
   componentWillMount() {
     this.boardBuild();
-  }
-
-  handleOnClick(event, data) {
-    if (this.props.onClick) {
-      this.props.onClick(event, data);
-    }
-
-    return false;
   }
 
   boardBuild() {
@@ -67,6 +59,15 @@ export default class Grid extends Component {
         width: `${this.props.size * this.props.squarePx}px`,
         height: `${this.props.size * this.props.squarePx}px`
       }}>
+
+        {this.props.ships.map((ship, key) => {
+          return (
+            <div key={key}>
+              {ship}
+            </div>
+          );
+        })}
+
         {this.matrix.map(cell => {
           return (cell.map(square => {
             return (
@@ -75,7 +76,9 @@ export default class Grid extends Component {
                 Xposition={square.x}
                 Yposition={square.y}
                 size={this.props.squarePx}
-                onClick={this.handleOnClick}
+                index={square.idx}
+                addShip={this.props.addShip}
+                shipAdded={this.props.shipAdded}
               />
             );
           }));

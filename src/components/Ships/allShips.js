@@ -53,6 +53,7 @@ export default class AllShips extends Component {
         transform: 'rotate(-90deg)'
       }
     };
+
     const orientation = this.props.orientation;
     const shipStyle = {};
     let liStyle = orientation === 'portrait' ? styles.liPortrait : styles.liLandscape;

@@ -2,13 +2,36 @@
 
 import React, {Component} from 'react';
 
+const SHIPTYPE = {
+  SUBMARINE: 'submarine',
+  BATTLE_SHIP: 'battleship',
+  CRUISER: 'cruiser',
+  DESTROYER: 'destroyer',
+  PATROL_BOAT: 'patrolBoat'
+};
+
+const SHIPS = [SHIPTYPE.SUBMARINE,
+  SHIPTYPE.BATTLE_SHIP,
+  SHIPTYPE.CRUISER,
+  SHIPTYPE.CRUISER,
+  SHIPTYPE.DESTROYER,
+  SHIPTYPE.DESTROYER,
+  SHIPTYPE.PATROL_BOAT,
+  SHIPTYPE.PATROL_BOAT,
+  SHIPTYPE.PATROL_BOAT];
+
+let CURRENTSHIP = null;
+
 export default class Square extends Component {
 
   static get propTypes() {
     return {
       Xposition: React.PropTypes.number.isRequired,
       Yposition: React.PropTypes.number.isRequired,
-      size: React.PropTypes.number.isRequired
+      size: React.PropTypes.number.isRequired,
+      index: React.PropTypes.number.isRequired,
+      addShip: React.PropTypes.func,
+      shipAdded: React.PropTypes.boolean
     };
   }
 
@@ -18,11 +41,16 @@ export default class Square extends Component {
     this.handleClick = this.handleClick.bind(this);
   }
 
-  handleClick(event) {
-    // this.props.onClick(e, {
-    //   x: this
-    // })
-    console.log("Clicking", event);
+  handleClick(e) {
+    e.preventDefault();
+
+    if (!CURRENTSHIP) {
+      CURRENTSHIP = SHIPS.shift();
+    } else if (this.props.shipAdded) {
+      CURRENTSHIP = SHIPS.shift();
+    }
+
+    this.props.addShip(CURRENTSHIP, this.props.Xposition, this.props.Yposition);
   }
 
   render() {
@@ -37,6 +65,6 @@ export default class Square extends Component {
       zIndex: '0'
     };
 
-    return <div style={squareStyle} onClick={this.handleClick}></div>
+    return <div className={`points offset ${this.props.index}`} style={squareStyle} onClick={this.handleClick}></div>
   }
 }
