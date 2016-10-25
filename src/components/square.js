@@ -30,7 +30,6 @@ export default class Square extends Component {
       size: React.PropTypes.number.isRequired,
       index: React.PropTypes.number.isRequired,
       addShip: React.PropTypes.func,
-      shipAdded: React.PropTypes.boolean,
       playerShoot: React.PropTypes.func
     };
   }

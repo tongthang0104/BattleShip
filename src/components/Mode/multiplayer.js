@@ -8,9 +8,8 @@ export default class Multiplayer extends Component {
       joinRoom: React.PropTypes.func,
       roomGenerator: React.PropTypes.func,
       getRoomInput: React.PropTypes.func,
-      roomId: React.PropTypes.number,
-      roomCreated: React.PropTypes.number,
-      roomValid: React.PropTypes.boolean,
+      roomId: React.PropTypes.string,
+      roomCreated: React.PropTypes.string,
       startGame: React.PropTypes.func
     };
   }
@@ -37,7 +36,7 @@ export default class Multiplayer extends Component {
           <div>
             <br />
             <h4>You Joined Room: {this.props.roomCreated}</h4>
-            <h5 className="join-room">Invite a friend in the chatroom!</h5>
+            <h5 className="join-room">Invite a friend to room {this.props.roomCreated}!</h5>
           </div>),
       generateButton: (
           <Button onClick={this.roomGenerator}>Create room</Button>
@@ -54,7 +53,7 @@ export default class Multiplayer extends Component {
           {this.hostOrNot()  ? html.roomCreated : null}
         </form>
 
-        <h5>{this.hostOrNot()  ? null : 'OR'}</h5>
+        <h5>OR</h5>
         <input
           type="text"
           placeholder="Enter a room to join"

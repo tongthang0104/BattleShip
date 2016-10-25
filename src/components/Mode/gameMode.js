@@ -12,9 +12,8 @@ export default class GameMode extends Component {
       joinRoom: React.PropTypes.func,
       roomGenerator: React.PropTypes.func,
       getRoomInput: React.PropTypes.func,
-      roomId: React.PropTypes.number,
-      roomCreated: React.PropTypes.number,
-      roomValid: React.PropTypes.boolean,
+      roomId: React.PropTypes.string,
+      roomCreated: React.PropTypes.string,
       startGame: React.PropTypes.func
     };
   }

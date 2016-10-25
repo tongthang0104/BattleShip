@@ -5,7 +5,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
 const config = require('./webpack.config.js');
 const isDeveloping = process.env.NODE_ENV !== 'production';
-const port = isDeveloping ? 7000 : process.env.PORT;
+const port = isDeveloping ? 3000 : process.env.PORT;
 const app = express();
 
 if (isDeveloping) {
@@ -45,11 +45,79 @@ const server = app.listen(port, '127.0.0.1', function onStart(err) {
 
 const io = require('socket.io')(server);
 let allShipsPosition = [];
-// Socket Handle
+
+// Socket Handle listen from Client
+let gameSocket;
 io.on('connection', function(socket) {
+  gameSocket = socket;
   socket.on('allShipAdded', function(data) {
     allShipsPosition = data.shipsPosition;
     console.log('allShipsPosition: ', allShipsPosition);
     this.emit('gameReady', data.gameReady);
   });
+
+  socket.on('playerShoot', function(data) {
+
+  })
+
+  socket.on('hostStartGame', function(data) {
+    socket.broadcast.to(data.roomId).emit('gameStartedByHost', data);
+  })
+
+  socket.on('createRoom', createRoom);
+  socket.on('joinRoom', joinRoom);
+  socket.on('trackingGame', trackingGame);
+  socket.on('checkRoom', checkRoom);
+
+  console.log("Client connected");
+
 });
+
+const createRoom = function(host){
+
+  let roomId = (Math.random() * 10000) | 0;
+
+  //join to the room
+  this.join(roomId.toString());
+
+  //invoke 'newGameCreated' at Client side and send gameId & socketId
+  let data = {
+    roomId: roomId.toString(),
+    mySocketId: this.id,
+  };
+
+  //Broadcast to yourself
+  this.emit('newGameCreated', data);
+};
+
+const joinRoom = function(data){
+
+    let room = gameSocket.nsp.adapter.rooms[data.roomId];
+
+    if (room !== undefined) {
+
+      if (room.length <= 1) {
+        this.join(data.roomId);
+        // ***** Player already Joined
+        // Call playerJoined at Frontend and pass room Id
+        io.sockets.in(data.roomId).emit('playerJoined', data);
+      }
+    }
+};
+
+const trackingGame = function(data) {
+
+};
+
+const checkRoom = function(roomId) {
+  let room = gameSocket.nsp.adapter.rooms[roomId];
+  if (!room) {
+    this.emit('validateRoom', {valid: false});
+  } else {
+    if (room.length > 1) {
+      this.emit('validateRoom', {valid: false});
+    } else {
+      this.emit('validateRoom', {valid: true});
+    }
+  }
+};
