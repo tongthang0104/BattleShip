@@ -7,10 +7,17 @@ import MultiplayerMode from './multiplayer';
 
 export default class GameMode extends Component {
 
-  // static get propTypes() {
-  //   return {
-  //   };
-  // }
+  static get propTypes() {
+    return {
+      joinRoom: React.PropTypes.func,
+      roomGenerator: React.PropTypes.func,
+      getRoomInput: React.PropTypes.func,
+      roomId: React.PropTypes.number,
+      roomCreated: React.PropTypes.number,
+      roomValid: React.PropTypes.boolean,
+      startGame: React.PropTypes.func
+    };
+  }
 
   constructor(props) {
     super(props);
@@ -35,7 +42,7 @@ export default class GameMode extends Component {
         <Modal
           className="room-input"
           id="singlePlayerModal"
-          header='Single Player Mode'
+          header="Single Player Mode"
           bottomSheet
           trigger={
             <Button waves="light">Single Player</Button>
@@ -46,18 +53,18 @@ export default class GameMode extends Component {
         <Modal
           className="room-input"
           id="multiplayerModal"
-          header='Create or Join a room'
+          header="Create or Join a room"
           bottomSheet
           trigger={
-            <Button waves='light'>Multiplayer</Button>
+            <Button waves="light">Multiplayer</Button>
           }>
-          {/* <Multiplayer
-            roomCreated={this.state.roomCreated}
-            roomId={this.state.roomId} host={this.state.host}
-            roomGenerator={this.roomGenerator}
-            roomValid={this.state.roomValid}
-            joinRoom={this.joinRoom}
-            getInput={this.getInput}/> */}
+          <MultiplayerMode
+            roomCreated={this.props.roomCreated}
+            roomId={this.props.roomId}
+            roomGenerator={this.props.roomGenerator}
+            roomValid={this.props.roomValid}
+            joinRoom={this.props.joinRoom}
+            getRoomInput={this.props.getRoomInput}/>
         </Modal>
       </div>
     );

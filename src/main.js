@@ -7,6 +7,7 @@ import Grid from './components/grid';
 import MainCss from './main.css';
 import Socket from './sockets';
 import GameMode from './components/Mode/gameMode';
+import _ from 'lodash';
 
 class App extends Component {
 
@@ -17,10 +18,13 @@ class App extends Component {
       gameReady: false,
       roomCreated: null,
       roomId: null,
-      roomValid: null,
+      roomValid: false,
       gameStart: false
     };
     this.startGame = this.startGame.bind(this);
+    this.joinRoom = this.joinRoom.bind(this);
+    this.roomGenerator = this.roomGenerator.bind(this);
+    this.getRoomInput = this.getRoomInput.bind(this);
   }
 
   componentDidMount() {
@@ -44,6 +48,51 @@ class App extends Component {
     });
   }
 
+  roomGenerator() {
+    Socket.emit('createRoom');
+  }
+
+  joinRoom() {
+    const data =  {
+      roomId: this.state.roomId
+    };
+
+    if (this.state.roomValid) {
+      // Call JoinRoom at server and send the data Object .
+      $('#multiplayerModal').closeModal();
+
+      Socket.emit('JoinRoom', data);
+      this.setState({
+        roomId: ''
+      });
+    } else {
+      this.setState({
+        roomId: ''
+      });
+      Materialize.toast('This room is not available', 4000);
+    }
+  }
+
+  validateRoom(flag) {
+    if (flag.valid) {
+      this.setState({roomValid: true});
+      console.log('valid', this.state.roomValid);
+    } else {
+      this.setState({roomValid: false});
+      console.log('not valid');
+    }
+  }
+
+  getRoomInput(e) {
+    const roomId = e.target.value;
+    this.setState({roomId: e.target.value});
+
+    if (this.state.roomValid) {
+      this.setState({roomValid: true});
+    }
+    _.debounce(Socket.emit('checkRoom', roomId), 500);
+  }
+
   render() {
     const gameHTML = {
       game: (
@@ -65,6 +114,12 @@ class App extends Component {
       gameMode: (
         <GameMode
           startGame={this.startGame}
+          roomCreated={this.state.roomCreated}
+          roomId={this.state.roomId}
+          roomGenerator={this.roomGenerator}
+          roomValid={this.state.roomValid}
+          joinRoom={this.joinRoom}
+          getRoomInput={this.getRoomInput}
         />
       )
     };
