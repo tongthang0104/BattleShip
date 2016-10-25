@@ -7,6 +7,7 @@ const config = require('./webpack.config.js');
 const isDeveloping = process.env.NODE_ENV !== 'production';
 const port = isDeveloping ? 3000 : process.env.PORT;
 const app = express();
+const _ = require('lodash');
 
 if (isDeveloping) {
   const compiler = webpack(config);
@@ -50,17 +51,26 @@ let allShipsPosition = [];
 let gameSocket;
 io.on('connection', function(socket) {
   gameSocket = socket;
+
+  // Listen from Client when all ships are added
+
   socket.on('allShipAdded', function(data) {
     allShipsPosition = data.shipsPosition;
-    console.log('allShipsPosition: ', allShipsPosition);
     this.emit('gameReady', data.gameReady);
+
+    // Then broadcast to notify Client that we are ready
+
+    socket.broadcast.to(data.roomId).emit('player2Ready', data.gameReady);
   });
 
   socket.on('playerShoot', function(data) {
-
+    socket.broadcast.to(data.roomId).emit('receivedShot', data.shotPosition);
   })
 
   socket.on('hostStartGame', function(data) {
+
+    // Broadcast to the other player that host pressed start game
+
     socket.broadcast.to(data.roomId).emit('gameStartedByHost', data);
   })
 
@@ -77,25 +87,23 @@ const createRoom = function(host){
 
   let roomId = (Math.random() * 10000) | 0;
 
-  //join to the room
+  // join to the room
   this.join(roomId.toString());
 
-  //invoke 'newGameCreated' at Client side and send gameId & socketId
+  // Notify 'newGameCreated' at Client side and send gameId & socketId
   let data = {
     roomId: roomId.toString(),
-    mySocketId: this.id,
+    mySocketId: this.id
   };
 
-  //Broadcast to yourself
+  // Broadcast to yourself
   this.emit('newGameCreated', data);
 };
 
-const joinRoom = function(data){
-
+const joinRoom = function(data) {
     let room = gameSocket.nsp.adapter.rooms[data.roomId];
 
     if (room !== undefined) {
-
       if (room.length <= 1) {
         this.join(data.roomId);
         // ***** Player already Joined
@@ -111,6 +119,7 @@ const trackingGame = function(data) {
 
 const checkRoom = function(roomId) {
   let room = gameSocket.nsp.adapter.rooms[roomId];
+
   if (!room) {
     this.emit('validateRoom', {valid: false});
   } else {

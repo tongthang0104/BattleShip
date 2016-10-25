@@ -37,7 +37,8 @@ export default class Board extends Component {
       size: React.PropTypes.number,
       squarePx: React.PropTypes.number,
       fireX: React.PropTypes.number,
-      fireY: React.PropTypes.number
+      fireY: React.PropTypes.number,
+      roomId: React.PropTypes.string
     };
   }
 
@@ -65,6 +66,10 @@ export default class Board extends Component {
     this.checkAvailable = this.checkAvailable.bind(this);
     this.changeOrientation = this.changeOrientation.bind(this);
     this.allShipsPosition = this.allShipsPosition.bind(this);
+  }
+
+  componentDidMount() {
+    Materialize.toast('Adding Ships to your board', 4000);
   }
 
   // Handle Game
@@ -220,7 +225,13 @@ export default class Board extends Component {
       ships.push(newShip);
 
       if (this.state.ships.length === 9) {
-        Socket.emit('allShipAdded', {gameReady: true, shipsPosition: this.allShipsPosition(ships)});
+        Socket.emit('allShipAdded', {
+          gameReady: true,
+          shipsPosition: this.allShipsPosition(ships),
+          roomId: this.props.roomId
+        });
+
+        Materialize.toast('All Ships Added', 4000);
       }
 
       return this.setState({
@@ -237,7 +248,7 @@ export default class Board extends Component {
 
   // Check if the pos is available
   checkAvailable(x, y, newShip, posNewShip) {
-    const currentShips = this.allShipsPosition(this.ships);
+    const currentShips = _.flatten(this.allShipsPosition(this.ships));
 
     // Check to see if any overlap ?
     const overlapPos = _.find(currentShips, (ship) => {
@@ -254,9 +265,9 @@ export default class Board extends Component {
   }
 
   allShipsPosition(ships) {
-    return _.flatten(_.map(ships, (ship) => {
+    return _.map(ships, (ship) => {
       return this.positionsShip(ship);
-    }));
+    });
   }
 
   // Check to see if that is out of range for a boat's size
