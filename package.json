@@ -15,7 +15,7 @@
   "scripts": {
     "test": "",
     "start": "node server",
-    "heroku-postbuild": "rimraf dist && cross-env NODE_ENV=production webpack --config ./webpack.production.config.js --progress --profile --colors",
+    "postinstall": "rimraf dist && cross-env NODE_ENV=production webpack --config ./webpack.production.config.js --progress --profile --colors",
     "eslint": "eslint .",
     "jscs": "jscs ."
   },
@@ -87,7 +87,6 @@
     "react-materialize": "^0.17.0",
     "react-modal": "^1.5.2",
     "react-redux": "^4.4.5",
-    "redux": "^3.6.0",
     "socket.io": "^1.5.0",
     "stats-webpack-plugin": "^0.4.2",
     "webpack": "^1.13.2",
