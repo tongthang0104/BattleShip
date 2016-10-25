@@ -12,7 +12,7 @@ module.exports = {
   ],
   output: {
     path: path.resolve(__dirname, 'dist'),
-    filename: '[name].js',
+    filename: '[name]-[hash].js',
     publicPath: '/'
   },
   plugins: [
@@ -42,7 +42,7 @@ module.exports = {
   },
   module: {
     loaders: [{
-      test: /\.js?$/,
+      test: /\.jsx?$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
