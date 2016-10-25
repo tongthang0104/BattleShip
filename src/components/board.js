@@ -7,7 +7,7 @@ import Cruiser from './Ships/Cruiser';
 import Destroyer from './Ships/Destroyer';
 import PatrolBoat from './Ships/PatrolBoat';
 import Submarine from './Ships/Submarine';
-
+import Socket from '../sockets';
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
   BATTLE_SHIP: 'battleship',
@@ -27,7 +27,7 @@ const SHIPSIZE = {
 const SHIP_ORIENTATION = {
   PORTRAIT: 'portrait',
   LANDSCAPE: 'landscape',
-  'ISPORTRAIT': true
+  ISPORTRAIT: true
 };
 
 export default class Board extends Component {
@@ -54,7 +54,8 @@ export default class Board extends Component {
     this.state = {
       ships: [],
       isPortrait: SHIP_ORIENTATION.ISPORTRAIT,
-      shipAdded: true
+      shipAdded: true,
+      gameReady: false
     };
 
     this.ships = [];
@@ -63,7 +64,10 @@ export default class Board extends Component {
     this.createShipWithPos = this.createShipWithPos.bind(this);
     this.checkAvailable = this.checkAvailable.bind(this);
     this.changeOrientation = this.changeOrientation.bind(this);
+    this.allShipsPosition = this.allShipsPosition.bind(this);
   }
+
+  // Handle Game
 
   changeOrientation() {
     this.setState({
@@ -180,6 +184,8 @@ export default class Board extends Component {
     };
   }
 
+  // Check the position for full Ship size
+
   positionsShip(ship) {
     const positions = [];
 
@@ -213,6 +219,10 @@ export default class Board extends Component {
     if (this.checkAvailable(x, y, newShip, posNewShip)) {
       ships.push(newShip);
 
+      if (this.state.ships.length === 9) {
+        Socket.emit('allShipAdded', {gameReady: true, shipsPosition: this.allShipsPosition(ships)});
+      }
+
       return this.setState({
         ships: ships,
         shipAdded: true
@@ -225,10 +235,9 @@ export default class Board extends Component {
     });
   }
 
+  // Check if the pos is available
   checkAvailable(x, y, newShip, posNewShip) {
-    const currentShips = _.flatten(_.map(this.ships, (ship) => {
-      return this.positionsShip(ship);
-    }));
+    const currentShips = this.allShipsPosition(this.ships);
 
     // Check to see if any overlap ?
     const overlapPos = _.find(currentShips, (ship) => {
@@ -242,6 +251,12 @@ export default class Board extends Component {
     }
 
     return true;
+  }
+
+  allShipsPosition(ships) {
+    return _.flatten(_.map(ships, (ship) => {
+      return this.positionsShip(ship);
+    }));
   }
 
   // Check to see if that is out of range for a boat's size

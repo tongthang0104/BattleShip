@@ -10,7 +10,8 @@ export default class Grid extends Component {
       squarePx: React.PropTypes.number,
       ships: React.PropTypes.array.isRequired,
       addShip: React.PropTypes.func,
-      shipAdded: React.PropTypes.boolean
+      shipAdded: React.PropTypes.boolean,
+      playerShoot: React.PropTypes.func
     };
   }
 
@@ -79,6 +80,7 @@ export default class Grid extends Component {
                 index={square.idx}
                 addShip={this.props.addShip}
                 shipAdded={this.props.shipAdded}
+                playerShoot={this.props.playerShoot}
               />
             );
           }));

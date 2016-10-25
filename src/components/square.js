@@ -1,7 +1,6 @@
 'use strict';
 
 import React, {Component} from 'react';
-
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
   BATTLE_SHIP: 'battleship',
@@ -31,7 +30,8 @@ export default class Square extends Component {
       size: React.PropTypes.number.isRequired,
       index: React.PropTypes.number.isRequired,
       addShip: React.PropTypes.func,
-      shipAdded: React.PropTypes.boolean
+      shipAdded: React.PropTypes.boolean,
+      playerShoot: React.PropTypes.func
     };
   }
 
@@ -50,7 +50,15 @@ export default class Square extends Component {
       CURRENTSHIP = SHIPS.shift();
     }
 
-    this.props.addShip(CURRENTSHIP, this.props.Xposition, this.props.Yposition);
+    if (this.props.addShip) {
+      this.props.addShip(CURRENTSHIP, this.props.Xposition, this.props.Yposition);
+    } else if (this.props.playerShoot) {
+      const shotPosition = {
+        x: this.props.Xposition,
+        y: this.props.Yposition
+      };
+      this.props.playerShoot(shotPosition);
+    }
   }
 
   render() {
@@ -65,6 +73,6 @@ export default class Square extends Component {
       zIndex: '0'
     };
 
-    return <div className={`points offset ${this.props.index}`} style={squareStyle} onClick={this.handleClick}></div>
+    return <div className={`points offset ${this.props.index}`} style={squareStyle} onClick={this.handleClick} />;
   }
 }
