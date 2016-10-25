@@ -92,7 +92,15 @@
     "stats-webpack-plugin": "^0.4.2",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.8.4",
-    "webpack-hot-middleware": "^2.13.0"
+    "webpack-hot-middleware": "^2.13.0",
+    "jscs": "^3.0.7",
+    "jsdom": "^9.8.0",
+    "json-loader": "^0.5.4",
+    "postcss-loader": "^1.0.0",
+    "react-tools": "^0.13.3",
+    "react-transform": "0.0.3",
+    "react-transform-hmr": "^1.0.4",
+    "style-loader": "^0.13.1",
   },
   "author": "",
   "license": "ISC"
