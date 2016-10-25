@@ -12,7 +12,7 @@ module.exports = {
   ],
   output: {
     path: path.join(__dirname, '/dist/'),
-    filename: '[name]-[hash].min.js',
+    filename: '[name].js',
     publicPath: '/'
   },
   plugins: [
@@ -39,7 +39,7 @@ module.exports = {
   ],
   module: {
     loaders: [{
-      test: /\.jsx?$/,
+      test: /\.js?$/,
       exclude: /node_modules/,
       loader: 'babel',
       query: {
