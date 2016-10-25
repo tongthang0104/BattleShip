@@ -100,7 +100,7 @@
     "react-tools": "^0.13.3",
     "react-transform": "0.0.3",
     "react-transform-hmr": "^1.0.4",
-    "style-loader": "^0.13.1",
+    "style-loader": "^0.13.1"
   },
   "author": "",
   "license": "ISC"
