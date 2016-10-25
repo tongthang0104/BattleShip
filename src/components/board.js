@@ -2,11 +2,11 @@
 import React, {Component} from 'react';
 import Grid from './grid';
 import _ from 'lodash';
-import BattleShip from './Ships/Battleship';
-import Cruiser from './Ships/Cruiser';
-import Destroyer from './Ships/Destroyer';
-import PatrolBoat from './Ships/PatrolBoat';
-import Submarine from './Ships/Submarine';
+import BattleShip from './Ships/Battleship/index';
+import Cruiser from './Ships/Cruiser/index';
+import Destroyer from './Ships/Destroyer/index';
+import PatrolBoat from './Ships/PatrolBoat/index';
+import Submarine from './Ships/Submarine/index';
 import Socket from '../sockets';
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
