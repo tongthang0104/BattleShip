@@ -8,16 +8,14 @@ module.exports = {
   devtool: 'eval-source-map',
   entry: [
     'webpack-hot-middleware/client?reload=true',
-    path.resolve(__dirname, 'src', 'main.js')
+    path.join(__dirname, 'src/main.js')
   ],
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.join(__dirname, '/dist/'),
     filename: '[name].js',
     publicPath: '/'
   },
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
+
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.tpl.html',

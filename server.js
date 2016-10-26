@@ -65,6 +65,7 @@ io.on('connection', function(socket) {
 
   socket.on('playerShoot', function(data) {
     socket.broadcast.to(data.roomId).emit('receivedShot', data.shotPosition);
+    socket.broadcast.to(data.roomId).emit('turnChange', data);
   })
 
   socket.on('hostStartGame', function(data) {
@@ -72,6 +73,7 @@ io.on('connection', function(socket) {
     // Broadcast to the other player that host pressed start game
 
     socket.broadcast.to(data.roomId).emit('gameStartedByHost', data);
+    this.emit('turnChange', {myTurn: true});
   })
 
   socket.on('createRoom', createRoom);

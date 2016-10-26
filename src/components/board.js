@@ -8,6 +8,8 @@ import Destroyer from './Ships/Destroyer';
 import PatrolBoat from './Ships/PatrolBoat';
 import Submarine from './Ships/Submarine';
 import Socket from '../sockets';
+import targetImg from './Ships/target.png';
+
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
   BATTLE_SHIP: 'battleship',
@@ -36,8 +38,7 @@ export default class Board extends Component {
     return {
       size: React.PropTypes.number,
       squarePx: React.PropTypes.number,
-      fireX: React.PropTypes.number,
-      fireY: React.PropTypes.number,
+      receivedShot: React.PropTypes.object,
       roomId: React.PropTypes.string
     };
   }
@@ -56,7 +57,15 @@ export default class Board extends Component {
       ships: [],
       isPortrait: SHIP_ORIENTATION.ISPORTRAIT,
       shipAdded: true,
-      gameReady: false
+      gameReady: false,
+      shipAmount: {
+        battleship: 1,
+        submarine: 1,
+        cruiser: 2,
+        destroyer: 2,
+        patrolBoat: 3
+      },
+      hitPos: []
     };
 
     this.ships = [];
@@ -66,10 +75,23 @@ export default class Board extends Component {
     this.checkAvailable = this.checkAvailable.bind(this);
     this.changeOrientation = this.changeOrientation.bind(this);
     this.allShipsPosition = this.allShipsPosition.bind(this);
+    this.shipSinked = this.shipSinked.bind(this);
+    this.checkIfHit = this.checkIfHit.bind(this);
   }
 
   componentDidMount() {
     Materialize.toast('Adding Ships to your board', 4000);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.receivedShot !== null) {
+      const shotPos = {
+        x: nextProps.receivedShot.x,
+        y: nextProps.receivedShot.y
+      };
+      console.log('Shot Position update: ', shotPos);
+      this.shipSinked(null, shotPos);
+    }
   }
 
   // Handle Game
@@ -200,7 +222,8 @@ export default class Board extends Component {
       for (let i = 1; i <= ship.size; i++) {
         positions.push({
           x: ship.x,
-          y: currentIndex++
+          y: currentIndex++,
+          shipType: ship.type
         });
       }
     } else {
@@ -209,7 +232,8 @@ export default class Board extends Component {
       for (let i = 1; i <= ship.size; i++) {
         positions.push({
           x: currentIndex++,
-          y: ship.y
+          y: ship.y,
+          shipType: ship.type
         });
       }
     }
@@ -286,6 +310,38 @@ export default class Board extends Component {
     return false;
   }
 
+  shipSinked(e, shotPosition) {
+    console.log('shooting at: ', shotPosition);
+    _.find(this.ships, (ship) => {
+      const allPos = this.positionsShip(ship);
+
+      return _.find(allPos, (shipPos) => {
+        const isHit = shipPos.x === shotPosition.x &&  shipPos.y === shotPosition.y;
+
+        if (isHit) {
+          if (!this.checkIfHit(this.state.hitPos, shotPosition)) {
+            console.log('HIT');
+            this.setState({
+              hitPos: _.uniq([...this.state.hitPos, Object.assign({}, ship, shotPosition)])
+            });
+          } else {
+            console.log('Ship was hit already');
+          }
+        } else {
+          console.log('Missed');
+        }
+
+        return isHit;
+      });
+    });
+  }
+
+  checkIfHit(hitPos, shotPosition) {
+    return _.find(hitPos, (hit) => {
+      return hit.x === shotPosition.x && hit.y === shotPosition.y;
+    });
+  }
+
   render() {
     const ships = [];
 
@@ -294,11 +350,29 @@ export default class Board extends Component {
     });
 
     return (
-      <div>
+      <div style={{
+        position: 'relative',
+        width: `${this.props.size * this.props.squarePx}px`,
+        height: `${this.props.size * this.props.squarePx}px`
+      }}>
 
-        <div>
+        {/* <div>
           <button onClick={this.changeOrientation}>{this.state.isPortrait ? SHIP_ORIENTATION.PORTRAIT : SHIP_ORIENTATION.LANDSCAPE}</button>
-        </div>
+        </div> */}
+
+        {this.state.hitPos.map((shinkPos, key) => {
+          return (
+            <img key={key} style={{
+              width: `${this.props.squarePx}px`,
+              height: `${this.props.squarePx}px`,
+              position: 'absolute',
+              left: `${this.props.squarePx * shinkPos.x}px`,
+              top: `${this.props.squarePx * shinkPos.y}px`,
+              zIndex: '2'
+            }} src={targetImg}
+            />
+          );
+        })}
 
         <Grid
           size={this.props.size}

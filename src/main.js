@@ -25,13 +25,16 @@ class App extends Component {
       playerJoinedModals: false,
       shipSunk: [],
       player2Ready: false,
-      receivedShot: null
+      receivedShot: null,
+      myTurn: false,
+      allShotPosition: []
     };
     this.startGame = this.startGame.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
     this.roomGenerator = this.roomGenerator.bind(this);
     this.getRoomInput = this.getRoomInput.bind(this);
     this.playerShoot = this.playerShoot.bind(this);
+    this.checkShotPosition = this.checkShotPosition.bind(this);
   }
 
   // Handle Socket listener
@@ -99,18 +102,50 @@ class App extends Component {
     });
 
     Socket.on('receivedShot', (shotPosition) => {
-      console.log('Player 2 shot: ', shotPosition);
       this.setState({
         receivedShot: shotPosition
       })
     });
+
+    Socket.on('turnChange', (data) => {
+      this.setState({
+        myTurn: data.myTurn
+      })
+    })
   }
 
   // Player make a shot
 
   playerShoot(shotPosition) {
-    Socket.emit('playerShoot', {shotPosition: shotPosition, roomId: this.state.roomId});
-    console.log('shotPosition: ', shotPosition);
+
+    // Check if it is my turn or not
+
+    if (this.state.myTurn) {
+
+      // Check if this place is fired already
+
+      if (this.checkShotPosition(this.state.allShotPosition, shotPosition)) {
+        Materialize.toast('You already shot this place', 2000);
+      } else {
+        this.setState({
+          allShotPosition: [...this.state.allShotPosition, shotPosition],
+          myTurn: false
+        });
+
+        // Notify server for the other player
+
+        Socket.emit('playerShoot', {shotPosition: shotPosition, roomId: this.state.roomId, myTurn: true});
+        console.log('shotPosition: ', shotPosition);
+      }
+    } else {
+      Materialize.toast('The other player\'s turn', 2000);
+    }
+  }
+
+  checkShotPosition(allShotPosition, shotPosition) {
+    return _.find(this.state.allShotPosition, (pos) => {
+      return pos.x === shotPosition.x && pos.y === shotPosition.y;
+    })
   }
 
   // Host press button to start the game Or Single Player start button
@@ -220,6 +255,7 @@ class App extends Component {
             key={1}
             squarePx={this._size}
             roomId={this.state.roomId}
+            receivedShot={this.state.receivedShot}
           />
           <br />
           {this.state.gameReady ? <h1>All Ships Added</h1> : <h1>Adding Ships</h1>}
