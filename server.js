@@ -89,9 +89,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('checkRoom', checkRoom);
-
   console.log("Client connected");
-
 });
 
 const createRoom = function(host){

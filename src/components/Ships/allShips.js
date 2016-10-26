@@ -40,7 +40,8 @@ export default class AllShips extends Component {
 
       imgPortrait: {
         width: `${this.props.size}px`,
-        height: `${this.props.size}px`
+        height: `${this.props.size}px`,
+        'background-color': '#55ACEE'
       },
 
       imgLandscape: {

@@ -7,15 +7,27 @@ h1 {
   font-family: 'Bevan', cursive;
   margin-top: 20%;
   margin-bottom: 5%;
-  color: #26a69a;
+  color: #5bc0de;
   font-size: 130px;
   -webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: white;
 }
 
-h2, h3, h4, h5{
+h2, h3 {
   font-family: 'Bevan', cursive;
-  color: #26a69a;
+  font-size: 18px;
+}
+
+h5 {
+  color: rgb(255, 213, 33);
+  font-size: 18px;
+  width: 300px;
+}
+
+h4 {
+  color: rgb(232, 141, 107);
+  font-size: 18px;
+  width: 300px;
 }
 
 .room_input {
@@ -27,4 +39,9 @@ h2, h3, h4, h5{
 input {
   text-align: center;
   font-size: 25px !important;
+}
+
+.board {
+  background-color: white;
+  width: auto;
 }

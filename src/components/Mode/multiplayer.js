@@ -35,8 +35,8 @@ export default class Multiplayer extends Component {
       roomCreated: (
           <div>
             <br />
-            <h4>You Joined Room: {this.props.roomCreated}</h4>
-            <h5 className="join-room">Copy and Paste the room to invite your friend!</h5>
+            <h2>You Joined Room: {this.props.roomCreated}</h2>
+            <h2 className="join-room">Copy and Paste the room to invite your friend!</h2>
           </div>),
       generateButton: (
           <Button onClick={this.roomGenerator}>Create a room</Button>
@@ -53,7 +53,7 @@ export default class Multiplayer extends Component {
           {this.hostOrNot()  ? html.roomCreated : null}
         </form>
         <br />
-        <h5>OR</h5>
+        <h2>OR</h2>
         <input
           type="text"
           placeholder="Enter a room to join"

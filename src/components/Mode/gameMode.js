@@ -1,7 +1,9 @@
 'use strict';
 
 import React, {Component} from 'react';
-import { Button, Card, Collapsible, CollapsibleItem, Modal} from 'react-materialize';
+import { Modal} from 'react-materialize';
+import { Button } from 'react-bootstrap';
+
 import SinglePlayerMode from './singlePlayer';
 import MultiplayerMode from './multiplayer';
 
@@ -54,7 +56,7 @@ export default class GameMode extends Component {
           id="multiplayerModal"
           bottomSheet
           trigger={
-            <Button waves="light">Multiplayer</Button>
+            <Button bsStyle="info">Multiplayer</Button>
           }>
           <MultiplayerMode
             roomCreated={this.props.roomCreated}

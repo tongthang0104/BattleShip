@@ -37,7 +37,6 @@ export default class Grid extends Component {
     this.boardBuild();
   }
 
-
   boardBuild() {
     let index = 0;
     this.matrix = [];
@@ -62,6 +61,7 @@ export default class Grid extends Component {
       <div
       style={{
         position: 'relative',
+        'backgroundColor': '#55ACEE',
         width: `${this.props.size * this.props.squarePx}px`,
         height: `${this.props.size * this.props.squarePx}px`
       }}>
@@ -75,8 +75,6 @@ export default class Grid extends Component {
         })}
 
         {this.props.hitPos.map((shinkPos, key) => {
-
-          console.log('check', this.props.squarePx, shinkPos.x);
           return (
             <img className="animated zoomIn" key={key} style={{
               width: `${this.props.squarePx}px`,

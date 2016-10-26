@@ -44,7 +44,6 @@ class App extends Component {
   componentDidMount() {
 
     // Listen from server whenever all ships is added (Ourself);
-
     Socket.on('gameReady', (data) => {
       this.setState({
         gameReady: data
@@ -64,12 +63,10 @@ class App extends Component {
 
     Socket.on('playerJoined', data => {
       $('#multiplayerModal').closeModal();
-      console.log('playerJoined room: ', data.roomId);
       this.setState({
         roomId: data.roomId,
         playerJoinedModals: true
       });
-
       Materialize.toast('New Player Joined', 4000);
     });
 
@@ -107,19 +104,18 @@ class App extends Component {
     Socket.on('receivedShot', (shotPosition) => {
       this.setState({
         receivedShot: shotPosition
-      })
+      });
     });
 
     Socket.on('turnChange', (data) => {
       this.setState({
         myTurn: data.myTurn
-      })
+      });
     });
 
     Socket.on('trackingGame', (data) => {
       console.log('Tracking Hit pos: ', data.hitPos);
       this.setState({
-
         // hitPos: the good shot position (hit a ship)
         hitPos: data.hitPos
       });
@@ -129,27 +125,20 @@ class App extends Component {
       this.setState({
         gameOverModal: true
       });
-      console.log('GameOver', data.hitPos.length);
-    })
+    });
   }
 
   // Player make a shot
 
   playerShoot(shotPosition) {
-
     // Check if it is my turn or not
-
     if (this.state.myTurn) {
-
       // Check if this place is fired already
-
       if (this.checkShotPosition(this.state.allShotPosition, shotPosition)) {
         Materialize.toast('You already shot this place', 2000);
       } else {
         this.setState({
-
           // allShotPosition: position that were fired
-
           allShotPosition: [...this.state.allShotPosition, shotPosition],
           myTurn: false
         });
@@ -167,7 +156,7 @@ class App extends Component {
   checkShotPosition(allShotPosition, shotPosition) {
     return _.find(this.state.allShotPosition, (pos) => {
       return pos.x === shotPosition.x && pos.y === shotPosition.y;
-    })
+    });
   }
 
   // Host press button to start the game Or Single Player start button
@@ -179,18 +168,18 @@ class App extends Component {
       playerJoinedModals: false
     });
 
-    let data = {
+    const data = {
       roomId: this.state.roomCreated,
       gameStart: true
-    }
+    };
 
     // Notify Socket server
 
-    Socket.emit('hostStartGame', data)
+    Socket.emit('hostStartGame', data);
   }
 
   roomGenerator(e) {
-    e.preventDefault()
+    e.preventDefault();
     Socket.emit('createRoom');
   }
 
@@ -207,9 +196,7 @@ class App extends Component {
     // Validate the room
 
     if (this.state.roomValid) {
-
       // Call JoinRoom at server and send the data Object
-
       $('#multiplayerModal').closeModal();
 
       Socket.emit('joinRoom', data);
@@ -220,7 +207,6 @@ class App extends Component {
       this.setState({
         roomId: ''
       });
-
       Materialize.toast('This room is not available', 4000);
     }
   }
@@ -246,14 +232,14 @@ class App extends Component {
       roomCreated: '',
       hitPos: [],
       allShotPosition: [],
-      myTurn: false
+      myTurn: false,
+      player2Ready: false,
+      gameReady: false
     })
   }
 
   render() {
-
-    const modeHtml = function() {
-
+    const modeHtml = () => {
       // If it is in multiplayer mode
 
       if (this.state.roomId) {
@@ -264,13 +250,15 @@ class App extends Component {
               squarePx={this._size}
               playerShoot={this.playerShoot}
               hitPos={this.state.hitPos}
-            /> : <h3>Place your ships and wait for the other player be ready!</h3>}
+            /> : <h3 style={{
+              'width': '300px',
+              'textAlign': 'center'
+            }}>Place your ships and wait for the other player be ready!</h3>}
           </div>
         );
       }
 
       // Or single player mode
-
       return (
         <div>
           {(this.state.gameReady) ? <Grid
@@ -281,22 +269,27 @@ class App extends Component {
           /> : null}
         </div>
       );
-    }.bind(this);
+    };
 
     const gameHTML = {
       game: (
-        <div>
-          <Board
-            className={MainCss.board}
-            key={1}
-            squarePx={this._size}
-            roomId={this.state.roomId}
-            receivedShot={this.state.receivedShot}
-          />
-          <br />
-          {this.state.gameReady && this.state.myTurn ? <h4>Your Turn</h4> : null}
-          <h5>{'Select and click below to fire to '}<strong>Player 2</strong>{' territory'}</h5>
-          {modeHtml()}
+        <div className="container">
+          <div className="row">
+            <div className="col-sm-6">
+              <Board
+                key={1}
+                squarePx={this._size}
+                roomId={this.state.roomId}
+                receivedShot={this.state.receivedShot}
+              />
+            </div>
+
+            <div className="col-sm-6">
+              {modeHtml()}
+              {this.state.gameReady && this.state.player2Ready ? <h5>{'Select and click above to fire to '}<strong>Opponent</strong>{' territory'}</h5> : null}
+              {this.state.gameReady && this.state.myTurn ? <h4 className="animated zoomIn">Your Turn</h4> : null}
+            </div>
+          </div>
         </div>
       ),
       gameMode: (
@@ -315,16 +308,18 @@ class App extends Component {
     // Style for the modals
 
     const customStyles = {
-      content : {
-        top                   : '50%',
-        left                  : '50%',
-        right                 : 'auto',
-        bottom                : 'auto',
-        marginRight           : '-50%',
-        transform             : 'translate(-50%, -50%)',
-        wordWrap              : 'break-word',
-        width                 : '65%',
-        background            : '#eee',
+      content: {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        wordWrap: 'break-word',
+        width: '65%',
+        background: '#eee',
+        display: 'inline-block'
       }
     };
 
@@ -335,7 +330,7 @@ class App extends Component {
           isOpen={this.state.playerJoinedModals}
           shouldCloseOnOverlayClick={false}
           style={customStyles}>
-          {this.state.roomCreated ? "Player joined! Press Start to play" : "Waiting for host"}
+          {this.state.roomCreated ? 'Player joined! Press Start to play' : 'Waiting for host'}
           <div className="progress">
             <div className="indeterminate"></div>
           </div>

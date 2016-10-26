@@ -81,6 +81,14 @@ export default class Board extends Component {
   }
 
   componentDidMount() {
+    Socket.on('gameOver', (data) => {
+      this.setState({
+        hitPos: [],
+        ships: [],
+        gameReady: false
+      });
+      console.log('GameOver', data.hitPos.length);
+    })
     Materialize.toast('Adding Ships to your board', 4000);
   }
 
@@ -363,8 +371,9 @@ export default class Board extends Component {
     return (
       <div style={{
         position: 'relative',
-        width: `${this.props.size * this.props.squarePx}px`,
-        height: `${this.props.size * this.props.squarePx}px`
+        'width': `${this.props.squarePx * this.props.size}px`,
+        'height': `${this.props.squarePx * this.props.size}px`,
+        'marginBottom': '60px'
       }}>
 
         {this.state.hitPos.map((shinkPos, key) => {

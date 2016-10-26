@@ -1,6 +1,8 @@
 'use strict';
 
 import React, {Component} from 'react';
+import Socket from '../sockets';
+
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
   BATTLE_SHIP: 'battleship',
@@ -20,6 +22,7 @@ const SHIPS = [SHIPTYPE.SUBMARINE,
   SHIPTYPE.PATROL_BOAT];
 
 let CURRENTSHIP = null;
+let SHIPS_PROTOTYPE = SHIPS.slice();
 
 export default class Square extends Component {
 
@@ -37,16 +40,27 @@ export default class Square extends Component {
   constructor(props) {
     super(props);
 
+    this.state = {
+      hover: false
+    };
+
     this.handleClick = this.handleClick.bind(this);
+    this.toggleHover = this.toggleHover.bind(this);
+  }
+
+  componentDidMount() {
+    Socket.on('gameOver', (data) => {
+      SHIPS_PROTOTYPE = SHIPS.slice();
+    });
   }
 
   handleClick(e) {
     e.preventDefault();
 
     if (!CURRENTSHIP) {
-      CURRENTSHIP = SHIPS.shift();
+      CURRENTSHIP = SHIPS_PROTOTYPE.shift();
     } else if (this.props.shipAdded) {
-      CURRENTSHIP = SHIPS.shift();
+      CURRENTSHIP = SHIPS_PROTOTYPE.shift();
     }
 
     if (this.props.addShip) {
@@ -60,10 +74,16 @@ export default class Square extends Component {
     }
   }
 
+  toggleHover() {
+    this.setState({
+      hover: !this.state.hover
+    });
+  }
+
   render() {
     const squareStyle = {
       position: 'absolute',
-      border: '1px solid #777',
+      border: '1px solid #d4862b',
       left: `${this.props.Xposition * this.props.size}px`,
       top: `${this.props.Yposition * this.props.size}px`,
       width: `${this.props.size}px`,
@@ -72,6 +92,10 @@ export default class Square extends Component {
       zIndex: '0'
     };
 
-    return <div className={`points offset ${this.props.index}`} style={squareStyle} onClick={this.handleClick} />;
+    if (this.state.hover) {
+      squareStyle['background-color'] = '#d4862b';
+    }
+
+    return <div className={`points offset ${this.props.index}`} style={squareStyle} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} onClick={this.handleClick} />;
   }
 }
