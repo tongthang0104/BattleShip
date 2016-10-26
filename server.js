@@ -78,7 +78,16 @@ io.on('connection', function(socket) {
 
   socket.on('createRoom', createRoom);
   socket.on('joinRoom', joinRoom);
-  socket.on('trackingGame', trackingGame);
+
+  socket.on('trackingGame', function(data) {
+    socket.broadcast.to(data.roomId).emit('trackingGame', data);
+
+    if (data.hitPos.length === 2) {
+      io.sockets.in(data.roomId).emit('gameOver', data);
+      this.leave();
+    }
+  });
+
   socket.on('checkRoom', checkRoom);
 
   console.log("Client connected");
@@ -113,10 +122,6 @@ const joinRoom = function(data) {
         io.sockets.in(data.roomId).emit('playerJoined', data);
       }
     }
-};
-
-const trackingGame = function(data) {
-
 };
 
 const checkRoom = function(roomId) {

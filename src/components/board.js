@@ -9,6 +9,7 @@ import PatrolBoat from './Ships/PatrolBoat';
 import Submarine from './Ships/Submarine';
 import Socket from '../sockets';
 import targetImg from './Ships/target.png';
+import { Button, Modal } from 'react-materialize';
 
 const SHIPTYPE = {
   SUBMARINE: 'submarine',
@@ -321,9 +322,19 @@ export default class Board extends Component {
         if (isHit) {
           if (!this.checkIfHit(this.state.hitPos, shotPosition)) {
             console.log('HIT');
+            const hitPos = _.uniq([...this.state.hitPos, Object.assign({}, ship, shotPosition)]);
+
             this.setState({
-              hitPos: _.uniq([...this.state.hitPos, Object.assign({}, ship, shotPosition)])
+              hitPos: hitPos
             });
+
+            let data = {
+              hitPos: hitPos,
+              shotPosition: shotPosition,
+              roomId: this.props.roomId
+            }
+
+            Socket.emit('trackingGame', data);
           } else {
             console.log('Ship was hit already');
           }
@@ -356,13 +367,9 @@ export default class Board extends Component {
         height: `${this.props.size * this.props.squarePx}px`
       }}>
 
-        {/* <div>
-          <button onClick={this.changeOrientation}>{this.state.isPortrait ? SHIP_ORIENTATION.PORTRAIT : SHIP_ORIENTATION.LANDSCAPE}</button>
-        </div> */}
-
         {this.state.hitPos.map((shinkPos, key) => {
           return (
-            <img key={key} style={{
+            <img className="animated zoomIn" key={key} style={{
               width: `${this.props.squarePx}px`,
               height: `${this.props.squarePx}px`,
               position: 'absolute',
@@ -381,6 +388,12 @@ export default class Board extends Component {
           addShip={this.addShip}
           shipAdded={this.state.shipAdded}
         />
+
+        <div>
+          <Button style={{
+            margin: '10px'
+          }} onClick={this.changeOrientation}>{this.state.isPortrait ? SHIP_ORIENTATION.PORTRAIT : SHIP_ORIENTATION.LANDSCAPE}</Button>
+        </div>
       </div>
 
     );

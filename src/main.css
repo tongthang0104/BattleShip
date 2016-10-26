@@ -1,8 +1,30 @@
-h2 {
-  color: red;
-  font-size: 20px;
+body {
+  text-align: center;
+  background-color: #333;
 }
 
 h1 {
-  font-size: 20px
+  font-family: 'Bevan', cursive;
+  margin-top: 20%;
+  margin-bottom: 5%;
+  color: #26a69a;
+  font-size: 130px;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+}
+
+h2, h3, h4, h5{
+  font-family: 'Bevan', cursive;
+  color: #26a69a;
+}
+
+.room_input {
+  width: 50%;
+  margin-left: 25%;
+  color: #26a69a;
+}
+
+input {
+  text-align: center;
+  font-size: 25px !important;
 }

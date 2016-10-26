@@ -7,7 +7,7 @@ import Grid from './components/grid';
 import MainCss from './main.css';
 import Socket from './sockets';
 import GameMode from './components/Mode/gameMode';
-import { Button, Modal, Label} from 'react-materialize';
+import { Button, Modal } from 'react-materialize';
 import Modals from 'react-modal';
 import _ from 'lodash';
 
@@ -27,7 +27,9 @@ class App extends Component {
       player2Ready: false,
       receivedShot: null,
       myTurn: false,
-      allShotPosition: []
+      allShotPosition: [],
+      hitPos: [],
+      gameOverModal: false
     };
     this.startGame = this.startGame.bind(this);
     this.joinRoom = this.joinRoom.bind(this);
@@ -35,6 +37,7 @@ class App extends Component {
     this.getRoomInput = this.getRoomInput.bind(this);
     this.playerShoot = this.playerShoot.bind(this);
     this.checkShotPosition = this.checkShotPosition.bind(this);
+    this.closeGameOver = this.closeGameOver.bind(this);
   }
 
   // Handle Socket listener
@@ -111,6 +114,22 @@ class App extends Component {
       this.setState({
         myTurn: data.myTurn
       })
+    });
+
+    Socket.on('trackingGame', (data) => {
+      console.log('Tracking Hit pos: ', data.hitPos);
+      this.setState({
+
+        // hitPos: the good shot position (hit a ship)
+        hitPos: data.hitPos
+      });
+    });
+
+    Socket.on('gameOver', (data) => {
+      this.setState({
+        gameOverModal: true
+      });
+      console.log('GameOver', data.hitPos.length);
     })
   }
 
@@ -128,6 +147,9 @@ class App extends Component {
         Materialize.toast('You already shot this place', 2000);
       } else {
         this.setState({
+
+          // allShotPosition: position that were fired
+
           allShotPosition: [...this.state.allShotPosition, shotPosition],
           myTurn: false
         });
@@ -216,6 +238,18 @@ class App extends Component {
     Socket.emit('checkRoom', roomId);
   }
 
+  closeGameOver() {
+    this.setState({
+      gameOverModal: false,
+      gameStart: false,
+      roomId: '',
+      roomCreated: '',
+      hitPos: [],
+      allShotPosition: [],
+      myTurn: false
+    })
+  }
+
   render() {
 
     const modeHtml = function() {
@@ -229,7 +263,8 @@ class App extends Component {
               key={2}
               squarePx={this._size}
               playerShoot={this.playerShoot}
-            /> : <h1>Waiting for the other player!</h1>}
+              hitPos={this.state.hitPos}
+            /> : <h3>Place your ships and wait for the other player be ready!</h3>}
           </div>
         );
       }
@@ -242,6 +277,7 @@ class App extends Component {
             key={2}
             squarePx={this._size}
             playerShoot={this.playerShoot}
+            hitPos={this.state.hitPos}
           /> : null}
         </div>
       );
@@ -249,17 +285,17 @@ class App extends Component {
 
     const gameHTML = {
       game: (
-        <div className={MainCss.main}>
-          <h2>Player1</h2>
+        <div>
           <Board
+            className={MainCss.board}
             key={1}
             squarePx={this._size}
             roomId={this.state.roomId}
             receivedShot={this.state.receivedShot}
           />
           <br />
-          {this.state.gameReady ? <h1>All Ships Added</h1> : <h1>Adding Ships</h1>}
-          <p>{'Select and click below to fire to '}<strong>Player 2</strong>{' territory'}</p>
+          {this.state.gameReady && this.state.myTurn ? <h4>Your Turn</h4> : null}
+          <h5>{'Select and click below to fire to '}<strong>Player 2</strong>{' territory'}</h5>
           {modeHtml()}
         </div>
       ),
@@ -304,6 +340,14 @@ class App extends Component {
             <div className="indeterminate"></div>
           </div>
           {this.state.roomCreated ? <Button onClick={this.startGame}>Start Game</Button> : null}
+        </Modals>
+
+        <Modals
+          isOpen={this.state.gameOverModal}
+          shouldCloseOnOverlayClick={false}
+          style={customStyles}>
+          {this.state.hitPos.length === 2 ? "Opponent's ships were destroyed! You won!" : "All your ships were sinked! You lost"}
+          <Button onClick={this.closeGameOver}>Close</Button>
         </Modals>
       </div>
     );

@@ -38,7 +38,7 @@ export default class GameMode extends Component {
     return (
       <div>
         <h1>BattleShip</h1>
-        <Modal
+        {/* <Modal
           className="room-input"
           id="singlePlayerModal"
           header="Single Player Mode"
@@ -47,12 +47,11 @@ export default class GameMode extends Component {
             <Button waves="light">Single Player</Button>
           }>
           <SinglePlayerMode startGameClicked={this.startGameClicked}/>
-        </Modal>
+        </Modal> */}
 
         <Modal
           className="room-input"
           id="multiplayerModal"
-          header="Create or Join a room"
           bottomSheet
           trigger={
             <Button waves="light">Multiplayer</Button>

@@ -1,6 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
 import Square from './square';
+import targetImg from './Ships/target.png';
 
 export default class Grid extends Component {
 
@@ -18,19 +19,24 @@ export default class Grid extends Component {
     return {
       size: 10,
       squarePx: 50,
-      ships: []
+      ships: [],
+      hitPos: []
     };
   }
 
   constructor(props) {
     super(props);
 
+    this.state = {
+      hitPos: []
+    };
     this.matrix = [];
   }
 
   componentWillMount() {
     this.boardBuild();
   }
+
 
   boardBuild() {
     let index = 0;
@@ -65,6 +71,22 @@ export default class Grid extends Component {
             <div key={key}>
               {ship}
             </div>
+          );
+        })}
+
+        {this.props.hitPos.map((shinkPos, key) => {
+
+          console.log('check', this.props.squarePx, shinkPos.x);
+          return (
+            <img className="animated zoomIn" key={key} style={{
+              width: `${this.props.squarePx}px`,
+              height: `${this.props.squarePx}px`,
+              position: 'absolute',
+              left: `${this.props.squarePx * shinkPos.x}px`,
+              top: `${this.props.squarePx * shinkPos.y}px`,
+              zIndex: '2'
+            }} src={targetImg}
+            />
           );
         })}
 

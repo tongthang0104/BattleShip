@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'react-materialize';
-
+import style from '../../main.css'
 export default class Multiplayer extends Component {
 
   static get propTypes() {
@@ -36,10 +36,10 @@ export default class Multiplayer extends Component {
           <div>
             <br />
             <h4>You Joined Room: {this.props.roomCreated}</h4>
-            <h5 className="join-room">Invite a friend to room {this.props.roomCreated}!</h5>
+            <h5 className="join-room">Copy and Paste the room to invite your friend!</h5>
           </div>),
       generateButton: (
-          <Button onClick={this.roomGenerator}>Create room</Button>
+          <Button onClick={this.roomGenerator}>Create a room</Button>
         ),
       joinButton: (
         <Button onClick={this.joinRoom} waves="light">Join room</Button>
@@ -47,12 +47,12 @@ export default class Multiplayer extends Component {
     };
 
     return (
-      <div className="room-input">
+      <div className={style.room_input}>
         <form >
           {this.hostOrNot() ? null : html.generateButton}
           {this.hostOrNot()  ? html.roomCreated : null}
         </form>
-
+        <br />
         <h5>OR</h5>
         <input
           type="text"
