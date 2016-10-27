@@ -82,7 +82,7 @@ io.on('connection', function(socket) {
   socket.on('trackingGame', function(data) {
     socket.broadcast.to(data.roomId).emit('trackingGame', data);
 
-    if (data.hitPos.length === 2) {
+    if (data.hitPos.length === 22) {
       io.sockets.in(data.roomId).emit('gameOver', data);
       this.leave();
     }

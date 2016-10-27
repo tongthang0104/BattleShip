@@ -7,7 +7,6 @@ BattleShip is a real-time multiplayer battleship game. Users can play in either 
 BattleShip was created using the React libraries for the front-end architecture. Node.js and Express were used for the backend  Socket.io is used to allow users to compete in real-time.
 
 ###Features###
-* single player mode - play with computer
 * multiplayer mode - play against a friend in real-time using socket.io!
 * supports all major browsers
 
@@ -21,7 +20,6 @@ There are three methods for getting started with this repo.
 Checkout this repo, install dependencies, then start the gulp process with the following:
 
 ```
-	> git clone github.com/An-App-Has-No-Name/BattleShip.git
 	> cd BattleShip
 	> npm install
 	> npm start

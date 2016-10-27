@@ -332,7 +332,7 @@ class App extends Component {
           style={customStyles}>
           {this.state.roomCreated ? 'Player joined! Press Start to play' : 'Waiting for host'}
           <div className="progress">
-            <div className="indeterminate"></div>
+            <div className="indeterminate"/>
           </div>
           {this.state.roomCreated ? <Button onClick={this.startGame}>Start Game</Button> : null}
         </Modals>
@@ -341,8 +341,14 @@ class App extends Component {
           isOpen={this.state.gameOverModal}
           shouldCloseOnOverlayClick={false}
           style={customStyles}>
-          {this.state.hitPos.length === 2 ? "Opponent's ships were destroyed! You won!" : "All your ships were sinked! You lost"}
-          <Button onClick={this.closeGameOver}>Close</Button>
+          {this.state.hitPos.length === 22 ? <h2>Opponent's ships were destroyed! You won!</h2> : <h2>All your ships were sinked! You lost</h2>}
+          <Button
+            style={{
+              display: 'block',
+              marginLeft: '40%',
+              marginTop: '20px'
+            }}
+            onClick={this.closeGameOver}>Close</Button>
         </Modals>
       </div>
     );
