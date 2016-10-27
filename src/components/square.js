@@ -74,6 +74,7 @@ export default class Square extends Component {
     }
   }
 
+  // Hover CSS
   toggleHover() {
     this.setState({
       hover: !this.state.hover

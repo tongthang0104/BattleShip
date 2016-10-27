@@ -11,7 +11,8 @@ export default class Grid extends Component {
       squarePx: React.PropTypes.number,
       ships: React.PropTypes.array.isRequired,
       addShip: React.PropTypes.func,
-      playerShoot: React.PropTypes.func
+      playerShoot: React.PropTypes.func,
+      hitPos: React.PropTypes.array
     };
   }
 
@@ -73,6 +74,8 @@ export default class Grid extends Component {
             </div>
           );
         })}
+
+        {/* Render the target image if Good Shot in Shooting Grid */}
 
         {this.props.hitPos.map((shinkPos, key) => {
           return (

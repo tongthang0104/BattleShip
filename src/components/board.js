@@ -66,7 +66,8 @@ export default class Board extends Component {
         destroyer: 2,
         patrolBoat: 3
       },
-      hitPos: []
+      hitPos: [],
+      missedPos: []
     };
 
     this.ships = [];
@@ -85,10 +86,12 @@ export default class Board extends Component {
       this.setState({
         hitPos: [],
         ships: [],
+        missedPos: [],
         gameReady: false
       });
       console.log('GameOver', data.hitPos.length);
-    })
+    });
+
     Materialize.toast('Adding Ships to your board', 4000);
   }
 
@@ -321,7 +324,7 @@ export default class Board extends Component {
 
   shipSinked(e, shotPosition) {
     console.log('shooting at: ', shotPosition);
-    _.find(this.ships, (ship) => {
+    const hit = _.find(this.ships, (ship) => {
       const allPos = this.positionsShip(ship);
 
       return _.find(allPos, (shipPos) => {
@@ -353,6 +356,14 @@ export default class Board extends Component {
         return isHit;
       });
     });
+
+    if (!hit) {
+      const missedPos = _.uniq([...this.state.missedPos, Object.assign({}, shotPosition)]);
+      this.setState({
+        missedPos: missedPos
+      });
+      Socket.emit('trackingGame', {missedPos: missedPos});
+    }
   }
 
   checkIfHit(hitPos, shotPosition) {
@@ -363,6 +374,8 @@ export default class Board extends Component {
 
   render() {
     const ships = [];
+
+    // Build the ship image
 
     _.each(this.state.ships, (ship, key) => {
       ships.push(this.buildShip(ship, key));
@@ -376,6 +389,8 @@ export default class Board extends Component {
         'marginBottom': '60px'
       }}>
 
+      {/* Render the target image if Good Shot in the other player's Board */}
+
         {this.state.hitPos.map((shinkPos, key) => {
           return (
             <img className="animated zoomIn" key={key} style={{
@@ -386,6 +401,21 @@ export default class Board extends Component {
               top: `${this.props.squarePx * shinkPos.y}px`,
               zIndex: '2'
             }} src={targetImg}
+            />
+          );
+        })}
+
+        {this.state.missedPos.map((missedPos, key) => {
+          return (
+            <div className="animated zoomIn" key={key} style={{
+              width: `${this.props.squarePx}px`,
+              height: `${this.props.squarePx}px`,
+              position: 'absolute',
+              left: `${this.props.squarePx * missedPos.x}px`,
+              top: `${this.props.squarePx * missedPos.y}px`,
+              zIndex: '2',
+              backgroundColor: 'red'
+            }}
             />
           );
         })}

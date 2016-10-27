@@ -7,7 +7,7 @@ import Grid from './components/grid';
 import MainCss from './main.css';
 import Socket from './sockets';
 import GameMode from './components/Mode/gameMode';
-import { Button, Modal } from 'react-materialize';
+import { Button } from 'react-materialize';
 import Modals from 'react-modal';
 import _ from 'lodash';
 
@@ -119,6 +119,13 @@ class App extends Component {
         // hitPos: the good shot position (hit a ship)
         hitPos: data.hitPos
       });
+
+      if (data.missedPos) {
+        this.setState({
+          // hitPos: the good shot position (hit a ship)
+          missedPos: data.missedPos
+        });
+      }
     });
 
     Socket.on('gameOver', (data) => {
@@ -235,12 +242,14 @@ class App extends Component {
       myTurn: false,
       player2Ready: false,
       gameReady: false
-    })
+    });
   }
 
   render() {
+    // render Helper
+
     const modeHtml = () => {
-      // If it is in multiplayer mode
+      // If it is in multiplayer mode, render the Shooting Grid
 
       if (this.state.roomId) {
         return (
@@ -258,7 +267,8 @@ class App extends Component {
         );
       }
 
-      // Or single player mode
+      // Or single player mode, render shooting Grid
+
       return (
         <div>
           {(this.state.gameReady) ? <Grid
@@ -271,6 +281,7 @@ class App extends Component {
       );
     };
 
+    // render Helper
     const gameHTML = {
       game: (
         <div className="container">
@@ -325,7 +336,12 @@ class App extends Component {
 
     return (
       <div>
+
+      {/* If gameStart render the Game View, orthewise render gameMode selection */}
         {this.state.gameStart ? gameHTML.game : gameHTML.gameMode}
+
+      {/* Modal pop up when Player Joined room  */}
+
         <Modals
           isOpen={this.state.playerJoinedModals}
           shouldCloseOnOverlayClick={false}
@@ -336,6 +352,8 @@ class App extends Component {
           </div>
           {this.state.roomCreated ? <Button onClick={this.startGame}>Start Game</Button> : null}
         </Modals>
+
+      {/* Modal pop up at the end to show result */}
 
         <Modals
           isOpen={this.state.gameOverModal}
