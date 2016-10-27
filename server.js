@@ -69,7 +69,6 @@ io.on('connection', function(socket) {
   })
 
   socket.on('hostStartGame', function(data) {
-
     // Broadcast to the other player that host pressed start game
 
     socket.broadcast.to(data.roomId).emit('gameStartedByHost', data);
@@ -94,8 +93,7 @@ io.on('connection', function(socket) {
   console.log("Client connected");
 });
 
-const createRoom = function(host){
-
+const createRoom = function(host) {
   let roomId = (Math.random() * 10000) | 0;
 
   // join to the room
@@ -115,6 +113,7 @@ const joinRoom = function(data) {
     let room = gameSocket.nsp.adapter.rooms[data.roomId];
 
     if (room !== undefined) {
+      // Limit number of players at 2
       if (room.length <= 1) {
         this.join(data.roomId);
         // ***** Player already Joined
@@ -124,6 +123,7 @@ const joinRoom = function(data) {
     }
 };
 
+// Check if the room is available on socket
 const checkRoom = function(roomId) {
   let room = gameSocket.nsp.adapter.rooms[roomId];
 

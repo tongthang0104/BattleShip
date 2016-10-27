@@ -41,7 +41,7 @@ export default class AllShips extends Component {
       imgPortrait: {
         width: `${this.props.size}px`,
         height: `${this.props.size}px`,
-        'background-color': '#55ACEE'
+        backgroundColor: '#55ACEE'
       },
 
       imgLandscape: {
@@ -57,8 +57,8 @@ export default class AllShips extends Component {
 
     const orientation = this.props.orientation;
     const shipStyle = {};
-    let liStyle = orientation === 'portrait' ? styles.liPortrait : styles.liLandscape;
-    let imgStyle = orientation === 'portrait' ? styles.imgPortrait : styles.imgLandscape;
+    const liStyle = orientation === 'portrait' ? styles.liPortrait : styles.liLandscape;
+    const imgStyle = orientation === 'portrait' ? styles.imgPortrait : styles.imgLandscape;
 
     if (this.props.Xposition) {
       shipStyle.left = `${this.props.Xposition * this.props.size}px`;

@@ -2,7 +2,8 @@
 import React, {Component} from 'react';
 import Square from './square';
 import targetImg from './Ships/target.png';
-
+import Socket from '../sockets';
+import _ from 'lodash';
 export default class Grid extends Component {
 
   static get propTypes() {
@@ -29,13 +30,24 @@ export default class Grid extends Component {
     super(props);
 
     this.state = {
-      hitPos: []
+      missedPos: []
     };
     this.matrix = [];
   }
 
   componentWillMount() {
     this.boardBuild();
+  }
+
+  componentDidMount() {
+    Socket.on('trackingGame', (data) => {
+      if (data.missedPos) {
+        const missedPos = _.uniqBy([...this.state.missedPos, data.missedPos]);
+        this.setState({
+          missedPos: missedPos
+        });
+      }
+    });
   }
 
   boardBuild() {
@@ -87,6 +99,23 @@ export default class Grid extends Component {
               top: `${this.props.squarePx * shinkPos.y}px`,
               zIndex: '2'
             }} src={targetImg}
+            />
+          );
+        })}
+
+        {this.state.missedPos.map((missedPos, key) => {
+          return (
+            <div className="animated zoomIn" key={key} style={{
+              width: `${this.props.squarePx}px`,
+              height: `${this.props.squarePx}px`,
+              position: 'absolute',
+              left: `${this.props.squarePx * missedPos.x}px`,
+              top: `${this.props.squarePx * missedPos.y}px`,
+              zIndex: '2',
+              border: '1px solid #A9A9A9',
+              borderRadius: '100%',
+              backgroundColor: '#A9A9A9'
+            }}
             />
           );
         })}

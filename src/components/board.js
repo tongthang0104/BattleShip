@@ -323,47 +323,49 @@ export default class Board extends Component {
   }
 
   shipSinked(e, shotPosition) {
-    console.log('shooting at: ', shotPosition);
-    const hit = _.find(this.ships, (ship) => {
-      const allPos = this.positionsShip(ship);
+    let missedTime = 0;
+    let trackShip;
 
-      return _.find(allPos, (shipPos) => {
+
+    _.find(this.ships, (ship) => {
+      const allPos = this.positionsShip(ship);
+      trackShip = ship
+
+      _.find(allPos, (shipPos) => {
         const isHit = shipPos.x === shotPosition.x &&  shipPos.y === shotPosition.y;
 
         if (isHit) {
           if (!this.checkIfHit(this.state.hitPos, shotPosition)) {
             console.log('HIT');
             const hitPos = _.uniq([...this.state.hitPos, Object.assign({}, ship, shotPosition)]);
-
             this.setState({
               hitPos: hitPos
             });
-
-            let data = {
+            const data = {
               hitPos: hitPos,
               shotPosition: shotPosition,
               roomId: this.props.roomId
-            }
+            };
 
             Socket.emit('trackingGame', data);
           } else {
             console.log('Ship was hit already');
           }
         } else {
-          console.log('Missed');
+          missedTime++;
+
+          if (missedTime === 22) {
+            const missedPos = _.uniq([...this.state.missedPos, Object.assign({}, trackShip, shotPosition)]);
+            this.setState({
+              missedPos: missedPos
+            });
+            Socket.emit('trackingGame', {roomId: this.props.roomId, missedPos: shotPosition});
+          }
         }
 
         return isHit;
       });
     });
-
-    if (!hit) {
-      const missedPos = _.uniq([...this.state.missedPos, Object.assign({}, shotPosition)]);
-      this.setState({
-        missedPos: missedPos
-      });
-      Socket.emit('trackingGame', {missedPos: missedPos});
-    }
   }
 
   checkIfHit(hitPos, shotPosition) {
@@ -414,7 +416,9 @@ export default class Board extends Component {
               left: `${this.props.squarePx * missedPos.x}px`,
               top: `${this.props.squarePx * missedPos.y}px`,
               zIndex: '2',
-              backgroundColor: 'red'
+              border: '1px solid #A9A9A9',
+              borderRadius: '100%',
+              backgroundColor: '#A9A9A9'
             }}
             />
           );

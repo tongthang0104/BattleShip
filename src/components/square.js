@@ -94,7 +94,7 @@ export default class Square extends Component {
     };
 
     if (this.state.hover) {
-      squareStyle['background-color'] = '#d4862b';
+      squareStyle.backgroundColor = '#d4862b';
     }
 
     return <div className={`points offset ${this.props.index}`} style={squareStyle} onMouseEnter={this.toggleHover} onMouseLeave={this.toggleHover} onClick={this.handleClick} />;

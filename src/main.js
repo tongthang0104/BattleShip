@@ -29,6 +29,7 @@ class App extends Component {
       myTurn: false,
       allShotPosition: [],
       hitPos: [],
+      missedPos: [],
       gameOverModal: false
     };
     this.startGame = this.startGame.bind(this);
@@ -42,7 +43,6 @@ class App extends Component {
 
   // Handle Socket listener
   componentDidMount() {
-
     // Listen from server whenever all ships is added (Ourself);
     Socket.on('gameReady', (data) => {
       this.setState({
@@ -114,16 +114,10 @@ class App extends Component {
     });
 
     Socket.on('trackingGame', (data) => {
-      console.log('Tracking Hit pos: ', data.hitPos);
-      this.setState({
-        // hitPos: the good shot position (hit a ship)
-        hitPos: data.hitPos
-      });
-
-      if (data.missedPos) {
+      if (data.hitPos) {
         this.setState({
           // hitPos: the good shot position (hit a ship)
-          missedPos: data.missedPos
+          hitPos: data.hitPos
         });
       }
     });
@@ -297,7 +291,8 @@ class App extends Component {
 
             <div className="col-sm-6">
               {modeHtml()}
-              {this.state.gameReady && this.state.player2Ready ? <h5>{'Select and click above to fire to '}<strong>Opponent</strong>{' territory'}</h5> : null}
+              {this.state.gameReady && this.state.player2Ready ?
+                <h5>{'Select and click above to fire to '}<strong>Opponent</strong>{' territory'}</h5> : null}
               {this.state.gameReady && this.state.myTurn ? <h4 className="animated zoomIn">Your Turn</h4> : null}
             </div>
           </div>
