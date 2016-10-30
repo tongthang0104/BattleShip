@@ -13,8 +13,16 @@ BattleShip was created using the React libraries for the front-end architecture.
 
 ###Getting Started###
 
-There are two methods for getting started with this repo.
+There are three methods for getting started with this repo.
 
+####DEMO#####
+
+```
+	> Go To https://battleship-challenge.herokuapp.com/
+	> create a new room
+	> send your room id to your friend to join
+	> Play !
+```
 
 ####Familiar with Git?#####
 
