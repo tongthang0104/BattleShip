@@ -331,7 +331,6 @@ class App extends Component {
 
     return (
       <div>
-      <h1>Hello World</h1>
 
       {/* If gameStart render the Game View, orthewise render gameMode selection */}
         {this.state.gameStart ? gameHTML.game : gameHTML.gameMode}
