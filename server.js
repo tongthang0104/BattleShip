@@ -37,11 +37,11 @@ if (isDeveloping) {
   });
 }
 
-const server = app.listen(port, '127.0.0.1', function onStart(err) {
+const server = app.listen(port, '0.0.0.0', function onStart(err) {
   if (err) {
     console.log(err);
   }
-  console.info('Listening on port %s. Open up http://127.0.0.1:%s/ in your browser.', port, port);
+  console.info('Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', port, port);
 });
 
 const io = require('socket.io')(server);

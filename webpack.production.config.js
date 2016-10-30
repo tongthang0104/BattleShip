@@ -8,10 +8,10 @@ var StatsPlugin = require('stats-webpack-plugin');
 
 module.exports = {
   entry: [
-    path.resolve(__dirname, 'src', 'main.js')
+    path.join(__dirname, 'src/main.js')
   ],
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.join(__dirname, '/dist/'),
     filename: '[name]-[hash].js',
     publicPath: '/'
   },
@@ -37,9 +37,6 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
     })
   ],
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  },
   module: {
     loaders: [{
       test: /\.jsx?$/,
