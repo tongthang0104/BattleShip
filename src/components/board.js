@@ -2,7 +2,7 @@
 import React, {Component} from 'react';
 import Grid from './grid';
 import _ from 'lodash';
-import BattleShip from './Ships/Battleship';
+import BattleShip from './Ships/BattleShip';
 import Cruiser from './Ships/Cruiser';
 import Destroyer from './Ships/Destroyer';
 import PatrolBoat from './Ships/PatrolBoat';
