@@ -17,12 +17,10 @@ There are three methods for getting started with this repo.
 
 ####DEMO#####
 
-```
 	> Go To [**Battleship Demo**](https://battleship-challenge.herokuapp.com)
 	> create a new room
 	> send your room id to your friend to join
 	> Play !
-```
 
 ####Familiar with Git?#####
 
